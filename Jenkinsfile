@@ -45,7 +45,7 @@ pipeline {
             agent {
                 docker {
                     image 'bitnami/kubectl:latest'
-                    args ''
+                    args '--entrypoint=""'
                 }
             }
             steps {
