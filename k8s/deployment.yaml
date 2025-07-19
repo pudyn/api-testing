@@ -20,8 +20,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: api-testing-service-configmap
-            - secretRef:
-                name: api-testing-service-secret
           imagePullPolicy: Always
           resources:
             requests:
