@@ -44,7 +44,8 @@ pipeline {
         stage('Deploy to K3s') {
             agent {
                 docker {
-                    image 'lachlanevenson/k8s-kubectl:v1.30.1'
+                    image 'bitnami/kubectl:latest'
+                    args ''
                 }
             }
             steps {
