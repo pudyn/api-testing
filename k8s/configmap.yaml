@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-testing-service-configmap
+data:
+  APP_ENV: production
+  PORT: "8080"

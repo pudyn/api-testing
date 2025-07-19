@@ -10,29 +10,28 @@ import (
 	"time"
 
 	"olympus/routes"
-	"olympus/telemetry"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	// Inisialisasi OpenTelemetry
-	shutdown := telemetry.InitTracer()
-	defer shutdown(context.Background())
-
 	r := mux.NewRouter()
 	routes.ApiV1Routes(r)
 
-	// Setup HTTP Server
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	address := fmt.Sprintf(":%s", port)
+
 	server := &http.Server{
-		Addr:         ":8080",
-		Handler:      r, // <-- Pasang router
+		Addr:         address,
+		Handler:      r,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  15 * time.Second,
 	}
 
-	// Channel untuk menunggu sinyal interupsi
 	idleConnsClosed := make(chan struct{})
 
 	go func() {
@@ -40,7 +39,6 @@ func main() {
 		signal.Notify(sigint, syscall.SIGINT, syscall.SIGTERM)
 		<-sigint
 
-		// Graceful shutdown dengan timeout
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
@@ -51,7 +49,7 @@ func main() {
 		close(idleConnsClosed)
 	}()
 
-	fmt.Println("Server running on http://localhost:8080")
+	fmt.Printf("Server running on http://localhost%s\n", address)
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		fmt.Printf("HTTP server ListenAndServe: %v\n", err)
 	}

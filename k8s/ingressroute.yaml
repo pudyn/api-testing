@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: api-testing-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/forwarded-headers-strategy: "trusted"
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`api.dev.local`) && PathPrefix(`/apitestingsvc`)
+      kind: Rule
+      middlewares:
+        - name: api-testing-prefix
+      services:
+        - name: api-testing-service
+          port: 80
