@@ -42,6 +42,11 @@ pipeline {
         }
 
         stage('Deploy to K3s') {
+            agent {
+                docker {
+                image 'bitnami/kubectl:latest'
+                }
+            }
             steps {
                 withCredentials([file(credentialsId: KUBECONFIG_CREDENTIAL_ID, variable: 'KUBECONFIG')]) {
                     sh '''
